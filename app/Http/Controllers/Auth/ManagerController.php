@@ -18,6 +18,10 @@ class ManagerController extends Controller {
         $this->adminTable = (new AdminModel())->getTable();
     }
 
+    public function get(Request $request) {
+        return ResponseHelper::response($request->user());
+    }
+
     public function login(Request $request) {
         $validator = Validator::make($request->all(), [
             "email" => "required|string|email|exists:$this->adminTable,email",

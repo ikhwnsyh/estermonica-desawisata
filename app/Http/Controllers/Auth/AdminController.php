@@ -19,6 +19,10 @@ class AdminController extends Controller {
         $this->adminTable = (new AdminModel())->getTable();
     }
 
+    public function get(Request $request) {
+        return ResponseHelper::response($request->user());
+    }
+
     public function register(Request $request) {
         $validator = Validator::make($request->all(), [
             "name" => "required|string",

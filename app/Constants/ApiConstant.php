@@ -8,4 +8,5 @@ class ApiConstant {
     const PREFIX_MANAGER = "manager";
     const PREFIX_USER = "user";
     const PREFIX_AUTH = "auth";
+    const PREFIX_GALLERY = "gallery";
 }
