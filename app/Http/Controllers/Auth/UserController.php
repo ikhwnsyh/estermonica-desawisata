@@ -7,9 +7,12 @@ use App\Constants\TokenConstant;
 use App\Helpers\ResponseHelper;
 use App\Http\Controllers\Controller;
 use App\Mail\PasswordResetMail;
+use App\Mail\VerifyMail;
 use App\Models\PasswordResetModel;
 use App\Models\UserModel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
@@ -41,20 +44,26 @@ class UserController extends Controller {
         ]);
         if ($validator->fails()) return ResponseHelper::response(null, $validator->errors()->first(), 400);
 
-        $user = UserModel::create([
-            "name" => $request->name,
-            "email" => $request->email,
-            "password" => Hash::make($request->password),
-            "phone" => $request->phone,
-            "gender" => $request->gender,
-            "birthday" => $request->birthday,
-            "city" => $request->city
-        ]);
+        return DB::transaction(function () use ($request) {
+            $token = Str::random(64);
+            $user = UserModel::create([
+                "name" => $request->name,
+                "email" => $request->email,
+                "token" => $token,
+                "password" => Hash::make($request->password),
+                "phone" => $request->phone,
+                "gender" => $request->gender,
+                "birthday" => $request->birthday,
+                "city" => $request->city
+            ]);
 
-        return ResponseHelper::response([
-            "user" => $user,
-            "token" => $user->createToken(TokenConstant::TOKEN_NAME, [TokenConstant::AUTH_USER])->plainTextToken
-        ]);
+            Mail::to($request->email)->send(new VerifyMail($token));
+
+            return ResponseHelper::response([
+                "user" => $user,
+                "token" => $user->createToken(TokenConstant::TOKEN_NAME, [TokenConstant::AUTH_USER])->plainTextToken
+            ]);
+        });
     }
 
     public function login(Request $request) {
@@ -72,6 +81,22 @@ class UserController extends Controller {
             "user" => $user,
             "token" => $user->createToken(TokenConstant::TOKEN_NAME, [TokenConstant::AUTH_USER])->plainTextToken
         ]);
+    }
+
+    public function verify(Request $request, $token) {
+        $validator = Validator::make([
+            "token" => $token
+        ], [
+            "token" => "required|string|min:64|max:64|exists:$this->userTable,token"
+        ]);
+        if ($validator->fails()) return ResponseHelper::response(null, $validator->errors()->first(), 400);
+
+        $user = UserModel::where("token", $request->token)->first();
+        $user->token = null;
+        $user->email_verified_at = Carbon::now();
+        $user->save();
+
+        return ResponseHelper::response($user);
     }
 
     public function sendForgotPassword(Request $request) {

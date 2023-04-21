@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
-class UserModel extends BaseAuthenticatableModel {
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+class UserModel extends BaseAuthenticatableModel implements MustVerifyEmail {
     /**
      * The table associated with the model.
      *
@@ -18,6 +20,7 @@ class UserModel extends BaseAuthenticatableModel {
     protected $fillable = [
         "name",
         "email",
+        "token",
         "password",
         "phone",
         "image",
@@ -32,6 +35,7 @@ class UserModel extends BaseAuthenticatableModel {
      * @var array<int, string>
      */
     protected $hidden = [
+        "token",
         "password",
         "remember_token",
     ];

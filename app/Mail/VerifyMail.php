@@ -9,7 +9,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class PasswordResetMail extends Mailable {
+class VerifyMail extends Mailable {
     use Queueable, SerializesModels;
     protected $token;
 
@@ -26,7 +26,7 @@ class PasswordResetMail extends Mailable {
      */
     public function envelope(): Envelope {
         return new Envelope(
-            subject: "Password Reset Mail"
+            subject: "Verify Mail"
         );
     }
 
@@ -37,7 +37,7 @@ class PasswordResetMail extends Mailable {
         return new Content(
             view: "emails.password-reset",
             with: [
-                "url" => env("APP_URL_FRONTEND") . "/reset/$this->token"
+                "url" => env("APP_URL_FRONTEND") . "/verify/$this->token"
             ]
         );
     }

@@ -9,5 +9,6 @@ Route::middleware([TokenConstant::AUTH_SANCTUM, TokenConstant::AUTH_USER])->grou
 });
 Route::post("register", "UserController@register");
 Route::post("login", "UserController@login");
+Route::get("verify/{token}", "UserController@verify");
 Route::post("forgot-password/send", "UserController@sendForgotPassword");
 Route::post("forgot-password/change", "UserController@changeForgotPassword");

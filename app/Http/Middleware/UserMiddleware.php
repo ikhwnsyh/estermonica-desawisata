@@ -7,8 +7,7 @@ use App\Helpers\ResponseHelper;
 use Closure;
 use Illuminate\Http\Request;
 
-class UserMiddleware
-{
+class UserMiddleware {
     /**
      * Handle an incoming request.
      *
@@ -17,7 +16,10 @@ class UserMiddleware
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
      */
     public function handle(Request $request, Closure $next) {
-        if (auth()->user()->tokenCan(TokenConstant::AUTH_USER)) return $next($request);
+        if (auth()->user()->tokenCan(TokenConstant::AUTH_USER)) {
+            if (auth()->user()->hasVerifiedEmail()) return $next($request);
+            return ResponseHelper::response(null, "Email is not verified", 401);
+        }
         return ResponseHelper::response(null, "Unauthenticated", 401);
     }
 }
