@@ -9,4 +9,5 @@ class ApiConstant {
     const PREFIX_USER = "user";
     const PREFIX_AUTH = "auth";
     const PREFIX_GALLERY = "gallery";
+    const PREFIX_ARTICLE = "article";
 }

@@ -14,6 +14,8 @@ class StorageHelper extends Controller {
             $file = Carbon::now()->format("Y-m-d-H-i") . "-$directory-" . Str::random(12) . "." . $request->file($field)->getClientOriginalExtension();
             Storage::disk("public")->putFileAs($directory, $request->file($field), $file);
             return $file;
+        } else if (!empty($request->input($field))) {
+            return $request->input($field);
         } else {
             return null;
         }
