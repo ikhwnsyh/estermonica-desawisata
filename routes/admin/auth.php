@@ -8,6 +8,7 @@ Route::middleware([TokenConstant::AUTH_SANCTUM, TokenConstant::AUTH_ADMIN])->gro
     Route::get("get", "AdminController@get");
     Route::post("register", "AdminController@register");
     Route::post("edit", "AdminController@edit");
+    Route::delete("delete/{id}", "AdminController@delete");
     Route::get("logout", "AdminController@logout");
 });
 Route::post("login", "AdminController@login");

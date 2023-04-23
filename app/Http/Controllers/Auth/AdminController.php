@@ -103,6 +103,19 @@ class AdminController extends Controller {
         return ResponseHelper::response($user);
     }
 
+    public function delete(Request $request, $id) {
+        $validator = Validator::make([
+            "id" => $id
+        ], [
+            "id" => "required|numeric|exists:$this->adminTable,id"
+        ]);
+        if ($validator->fails()) return ResponseHelper::response(null, $validator->errors()->first(), 400);
+
+        AdminModel::find($id)->delete();
+
+        return ResponseHelper::response();
+    }
+
     public function logout(Request $request) {
         $request->user()->currentAccessToken()->delete();
 
