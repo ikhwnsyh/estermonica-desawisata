@@ -37,7 +37,7 @@ class PasswordResetMail extends Mailable {
         return new Content(
             view: "emails.password-reset",
             with: [
-                "url" => env("APP_URL_FRONTEND") . "/reset/$this->token"
+                "url" => env("APP_URL_FRONTEND") . "/user/reset/$this->token"
             ]
         );
     }

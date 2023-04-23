@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Constants\GenderConstant;
 use App\Constants\TokenConstant;
 use App\Helpers\ResponseHelper;
+use App\Helpers\StorageHelper;
 use App\Http\Controllers\Controller;
 use App\Mail\PasswordResetMail;
 use App\Mail\VerifyMail;
@@ -105,12 +106,13 @@ class UserController extends Controller {
         ]);
         if ($validator->fails()) return ResponseHelper::response(null, $validator->errors()->first(), 400);
 
+        $token = Str::random(64);
         PasswordResetModel::create([
             "email" => $request->email,
-            "token" => Str::random(64)
+            "token" => $token
         ]);
 
-        Mail::to($request->email)->send(new PasswordResetMail());
+        Mail::to($request->email)->send(new PasswordResetMail($token));
 
         return ResponseHelper::response();
     }
@@ -130,6 +132,37 @@ class UserController extends Controller {
         $reset->forceDelete();
 
         return ResponseHelper::response();
+    }
+
+    public function edit(Request $request) {
+        $validator = Validator::make($request->all(), [
+            "name" => "required|string",
+            "email" => "required|string|email",
+            "phone" => ["required", "regex:/^([0-9\s\-\+\(\)]*)$/", "min:10"],
+            "gender" => ["required", "numeric", Rule::in([GenderConstant::MALE, GenderConstant::FEMALE])],
+            "birthday" => "required|date",
+            "city" => "required|string"
+        ]);
+        if ($validator->fails()) return ResponseHelper::response(null, $validator->errors()->first(), 400);
+
+        $user = UserModel::find(auth()->id());
+        if ($user->email !== $request->email) {
+            $validator = Validator::make($request->all(), [
+                "email" => "unique:$this->userTable,email"
+            ]);
+            if ($validator->fails()) return ResponseHelper::response(null, $validator->errors()->first(), 400);
+        }
+
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->phone = $request->phone;
+        $user->gender = $request->gender;
+        $user->birthday = $request->birthday;
+        $user->city = $request->city;
+        $user->image = $request->hasFile("image") ? StorageHelper::save($request, "image", "users") : null;
+        $user->save();
+
+        return ResponseHelper::response($user);
     }
 
     public function logout(Request $request) {

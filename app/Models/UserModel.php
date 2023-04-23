@@ -48,4 +48,8 @@ class UserModel extends BaseAuthenticatableModel implements MustVerifyEmail {
     protected $casts = [
         "email_verified_at" => "datetime",
     ];
+
+    public function getImageAttribute() {
+        return env("APP_URL") . "/storage/users/" . $this->attributes["image"];
+    }
 }
