@@ -11,4 +11,5 @@ class ApiConstant {
     const PREFIX_GALLERY = "gallery";
     const PREFIX_ARTICLE = "article";
     const PREFIX_COMMENT = "comment";
+    const PREFIX_CHAT = "chat";
 }
