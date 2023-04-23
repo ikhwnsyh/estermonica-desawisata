@@ -19,8 +19,14 @@ class AdminController extends Controller {
         $this->adminTable = (new AdminModel())->getTable();
     }
 
-    public function get(Request $request) {
+    public function self(Request $request) {
         return ResponseHelper::response($request->user());
+    }
+
+    public function get(Request $request) {
+        $admins = AdminModel::orderByDesc("id")->paginate();
+
+        return ResponseHelper::response($admins);
     }
 
     public function register(Request $request) {
@@ -61,6 +67,40 @@ class AdminController extends Controller {
             "user" => $user,
             "token" => $user->createToken(TokenConstant::TOKEN_NAME, [TokenConstant::AUTH_ADMIN])->plainTextToken
         ]);
+    }
+
+    public function edit(Request $request) {
+        $validator = Validator::make($request->all(), [
+            "id" => "required|numeric|exists:$this->adminTable,id",
+            "name" => "required|string",
+            "email" => "required|string|email",
+            "type" => ["required", "numeric", Rule::in([AdminTypeConstant::ADMINISTRATOR, AdminTypeConstant::MANAGER])]
+        ]);
+        if ($validator->fails()) return ResponseHelper::response(null, $validator->errors()->first(), 400);
+
+        $user = AdminModel::find($request->id);
+        if ($user->email !== $request->email) {
+            $validator = Validator::make($request->all(), [
+                "email" => "unique:$this->adminTable,email"
+            ]);
+            if ($validator->fails()) return ResponseHelper::response(null, $validator->errors()->first(), 400);
+        }
+        if (!empty($request->input("password"))) {
+            $validator = Validator::make($request->all(), [
+                "password" => "required|string|min:8",
+                "confirm_password" => "required|string|min:8|same:password",
+            ]);
+            if ($validator->fails()) return ResponseHelper::response(null, $validator->errors()->first(), 400);
+
+            $user->password = Hash::make($request->password);
+        }
+
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->type = $request->type;
+        $user->save();
+
+        return ResponseHelper::response($user);
     }
 
     public function logout(Request $request) {
