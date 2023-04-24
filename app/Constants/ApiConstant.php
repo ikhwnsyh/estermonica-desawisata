@@ -12,4 +12,6 @@ class ApiConstant {
     const PREFIX_ARTICLE = "article";
     const PREFIX_COMMENT = "comment";
     const PREFIX_CHAT = "chat";
+    const PREFIX_TICKET_BUNDLE = "ticket-bundle";
+    const PREFIX_TICKET = "ticket";
 }
