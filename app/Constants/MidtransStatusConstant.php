@@ -15,4 +15,6 @@ class MidtransStatusConstant {
     const PARTIAL_CHARGEBACK = 10;
     const EXPIRE = 11;
     const FAILURE = 12;
+    const CHECK_IN = 13;
+    const CHECK_OUT = 14;
 }
