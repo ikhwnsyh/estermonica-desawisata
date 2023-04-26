@@ -14,4 +14,5 @@ class ApiConstant {
     const PREFIX_CHAT = "chat";
     const PREFIX_TICKET_BUNDLE = "ticket-bundle";
     const PREFIX_TICKET = "ticket";
+    const PREFIX_TRANSACTION = "transaction";
 }

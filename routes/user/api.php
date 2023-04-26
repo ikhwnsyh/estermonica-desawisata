@@ -13,5 +13,6 @@ Route::namespace(ucfirst(ApiConstant::PREFIX_USER))->group(function () {
 
     Route::middleware([TokenConstant::AUTH_SANCTUM, TokenConstant::AUTH_USER])->group(function () {
         Route::prefix(ApiConstant::PREFIX_CHAT)->group(__DIR__ . "/" . ApiConstant::PREFIX_CHAT . ".php");
+        Route::prefix(ApiConstant::PREFIX_TRANSACTION)->group(__DIR__ . "/" . ApiConstant::PREFIX_TRANSACTION . ".php");
     });
 });
