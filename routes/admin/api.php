@@ -12,4 +12,5 @@ Route::middleware([TokenConstant::AUTH_SANCTUM, TokenConstant::AUTH_ADMIN])
     Route::prefix(ApiConstant::PREFIX_ARTICLE)->group(__DIR__ . "/" . ApiConstant::PREFIX_ARTICLE . ".php");
     Route::prefix(ApiConstant::PREFIX_TICKET_BUNDLE)->group(__DIR__ . "/" . ApiConstant::PREFIX_TICKET_BUNDLE . ".php");
     Route::prefix(ApiConstant::PREFIX_TICKET)->group(__DIR__ . "/" . ApiConstant::PREFIX_TICKET . ".php");
+    Route::prefix(ApiConstant::PREFIX_TRANSACTION)->group(__DIR__ . "/" . ApiConstant::PREFIX_TRANSACTION . ".php");
 });
