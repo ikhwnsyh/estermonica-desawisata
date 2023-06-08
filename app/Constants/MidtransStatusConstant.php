@@ -2,7 +2,11 @@
 
 namespace App\Constants;
 
+use App\Traits\EnumTrait;
+
 class MidtransStatusConstant {
+    use EnumTrait;
+
     const AUTHORIZE = 1;
     const CAPTURE = 2;
     const SETTLEMENT = 3;

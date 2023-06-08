@@ -110,15 +110,4 @@ class TicketController extends Controller {
             return ResponseHelper::response($snapUrl);
         });
     }
-
-    public function update(Request $request) {
-        $validator = Validator::make($request->all(), [
-            "id" => "required|numeric|exists:$this->ticketBundleTable,id",
-            "total_adult" => "required|numeric",
-            "total_child" => "required|numeric"
-        ]);
-        if ($validator->fails()) return ResponseHelper::response(null, $validator->errors()->first(), 400);
-
-        return ResponseHelper::response();
-    }
 }
