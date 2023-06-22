@@ -44,8 +44,8 @@ class TicketController extends Controller {
     public function add(Request $request) {
         $validator = Validator::make($request->all(), [
             "name" => "required|string",
-            "adult_price" => "required|numeric|min:1",
-            "child_price" => "required|numeric|min:1",
+            "adult_price" => "required|numeric|min:0",
+            "child_price" => "required|numeric|min:0",
             "bundles" => "required|array|min:1"
         ]);
         if ($validator->fails()) return ResponseHelper::response(null, $validator->errors()->first(), 400);
@@ -57,8 +57,8 @@ class TicketController extends Controller {
         $validator = Validator::make($request->all(), [
             "id" => "required|numeric|exists:$this->ticketTable,id",
             "name" => "required|string",
-            "adult_price" => "required|numeric|min:1",
-            "child_price" => "required|numeric|min:1",
+            "adult_price" => "required|numeric|min:0",
+            "child_price" => "required|numeric|min:0",
             "bundles" => "required|array|min:1"
         ]);
         if ($validator->fails()) return ResponseHelper::response(null, $validator->errors()->first(), 400);
