@@ -21,4 +21,5 @@ class MidtransStatusConstant {
     const FAILURE = 12;
     const CHECK_IN = 13;
     const CHECK_OUT = 14;
+    const BOOKING = 15;
 }

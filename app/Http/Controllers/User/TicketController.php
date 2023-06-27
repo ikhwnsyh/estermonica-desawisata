@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Constants\MidtransStatusConstant;
 use App\Helpers\ResponseHelper;
 use App\Http\Controllers\Controller;
+use App\Jobs\Booking;
 use App\Models\TicketBundleModel;
 use App\Models\TransactionHistoryModel;
 use App\Models\TransactionModel;
@@ -50,7 +51,8 @@ class TicketController extends Controller {
         $validator = Validator::make($request->all(), [
             "id" => "required|numeric|exists:$this->ticketBundleTable,id",
             "total_adult" => "required|numeric",
-            "total_child" => "required|numeric"
+            "total_child" => "required|numeric",
+            "datetime" => "nullable|date"
         ]);
         if ($validator->fails()) return ResponseHelper::response(null, $validator->errors()->first(), 400);
 
@@ -73,12 +75,15 @@ class TicketController extends Controller {
             Config::$is3ds = true;
             Config::$overrideNotifUrl = env("MIDTRANS_OVERRIDE_NOTIFICATION_URL");
 
-            $snapUrl = Snap::getSnapUrl([
-                "transaction_details" => [
-                    "order_id" => $invoiceNumber,
-                    "gross_amount" => $grossAmount
-                ]
-            ]);
+            $snapUrl = null;
+            if (!$request->has("datetime")) {
+                $snapUrl = Snap::getSnapUrl([
+                    "transaction_details" => [
+                        "order_id" => $invoiceNumber,
+                        "gross_amount" => $grossAmount
+                    ]
+                ]);
+            }
 
             $transaction = TransactionModel::create([
                 "invoice_number" => $invoiceNumber,
@@ -86,11 +91,12 @@ class TicketController extends Controller {
                 "gross_amount" => $grossAmount,
                 "total_adult" => $request->total_adult,
                 "total_child" => $request->total_child,
-                "snap_url" => $snapUrl
+                "snap_url" => $snapUrl,
+                "datetime" => $request->datetime
             ]);
             TransactionHistoryModel::create([
                 "transaction_id" => $transaction->id,
-                "status" => MidtransStatusConstant::PENDING
+                "status" => $request->has("datetime") ? MidtransStatusConstant::BOOKING : MidtransStatusConstant::PENDING
             ]);
             $transactionTicketBundle = TransactionTicketBundleModel::create([
                 "transaction_id" => $transaction->id,
