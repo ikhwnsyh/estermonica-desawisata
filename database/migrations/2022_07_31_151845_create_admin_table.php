@@ -31,10 +31,10 @@ return new class extends Migration {
             $this->softDeletes($table);
         });
 
-        $email = Str::lower(Str::random(10) . "@" . Str::random(8) . ".com");
+        $email = "admin@gmail.com";
         (new ConsoleOutput())->writeln(PHP_EOL);
         (new ConsoleOutput())->writeln("  Administrator Email : $email");
-        $password = Str::random(8);
+        $password = "admin123";
         (new ConsoleOutput())->writeln("  Administrator Password : $password");
         AdminModel::create([
             "name" => "Administrator",

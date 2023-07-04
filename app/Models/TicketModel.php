@@ -19,6 +19,8 @@ class TicketModel extends BaseModel {
         "name",
         "adult_price",
         "child_price",
+        "bundle_adult_price",
+        "bundle_child_price",
         "created_at",
         "updated_at",
         "deleted_at"

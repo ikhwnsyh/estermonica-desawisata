@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Models\TransactionHistoryModel;
 use App\Models\TransactionModel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
@@ -57,7 +58,8 @@ class TransactionController extends Controller {
             "detail.status in (" . implode(",", [
                 MidtransStatusConstant::SETTLEMENT,
                 MidtransStatusConstant::CHECK_IN
-            ]) . ")"
+            ]) . ")",
+            "{$this->transactionTable}.date = '" . Carbon::now("Asia/Jakarta") . "'"
         ];
         if (!empty($request->input("search"))) {
             array_push($filters, "$this->transactionTable.invoice_number = '$request->search'");

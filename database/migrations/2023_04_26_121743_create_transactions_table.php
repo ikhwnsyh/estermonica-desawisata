@@ -23,8 +23,9 @@ return new class extends Migration {
             $table->unsignedBigInteger("gross_amount");
             $table->unsignedBigInteger("total_adult");
             $table->unsignedBigInteger("total_child");
+            $table->unsignedBigInteger("type");
             $table->string("snap_url")->nullable();
-            $table->dateTime("datetime")->nullable();
+            $table->date("date")->nullable();
             $table->unsignedBigInteger("check_in")->nullable();
             $table->unsignedBigInteger("check_out")->nullable();
             $this->timestamps($table);

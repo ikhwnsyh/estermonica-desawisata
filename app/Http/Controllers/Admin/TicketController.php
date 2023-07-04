@@ -33,6 +33,8 @@ class TicketController extends Controller {
             $ticket->name = $request->name;
             $ticket->adult_price = $request->adult_price;
             $ticket->child_price = $request->child_price;
+            $ticket->bundle_adult_price = $request->bundle_adult_price;
+            $ticket->bundle_child_price = $request->bundle_child_price;
             $ticket->save();
 
             $ticket->ticketBundles()->sync($request->bundles);
@@ -44,9 +46,11 @@ class TicketController extends Controller {
     public function add(Request $request) {
         $validator = Validator::make($request->all(), [
             "name" => "required|string",
-            "adult_price" => "required|numeric|min:0",
-            "child_price" => "required|numeric|min:0",
-            "bundles" => "required|array|min:1"
+            "adult_price" => "required|numeric|min:1",
+            "child_price" => "required|numeric|min:1",
+            "bundle_adult_price" => "required|numeric|min:1",
+            "bundle_child_price" => "required|numeric|min:1",
+            "bundles" => "nullable|array"
         ]);
         if ($validator->fails()) return ResponseHelper::response(null, $validator->errors()->first(), 400);
 
@@ -57,9 +61,11 @@ class TicketController extends Controller {
         $validator = Validator::make($request->all(), [
             "id" => "required|numeric|exists:$this->ticketTable,id",
             "name" => "required|string",
-            "adult_price" => "required|numeric|min:0",
-            "child_price" => "required|numeric|min:0",
-            "bundles" => "required|array|min:1"
+            "adult_price" => "required|numeric|min:1",
+            "child_price" => "required|numeric|min:1",
+            "bundle_adult_price" => "required|numeric|min:1",
+            "bundle_child_price" => "required|numeric|min:1",
+            "bundles" => "nullable|array"
         ]);
         if ($validator->fails()) return ResponseHelper::response(null, $validator->errors()->first(), 400);
 

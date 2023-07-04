@@ -21,8 +21,9 @@ class TransactionModel extends BaseModel {
         "gross_amount",
         "total_adult",
         "total_child",
+        "type",
         "snap_url",
-        "datetime",
+        "date",
         "created_at",
         "updated_at",
         "deleted_at"

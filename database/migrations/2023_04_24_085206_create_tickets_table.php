@@ -20,6 +20,8 @@ return new class extends Migration {
             $table->string("name");
             $table->unsignedBigInteger("adult_price");
             $table->unsignedBigInteger("child_price");
+            $table->unsignedBigInteger("bundle_adult_price");
+            $table->unsignedBigInteger("bundle_child_price");
             $this->timestamps($table);
             $this->softDeletes($table);
         });
