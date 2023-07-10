@@ -27,7 +27,7 @@ class TransactionController extends Controller {
         $detailData = DB::table("$this->transactionHistoryTable as detail_data")
             ->selectRaw("detail_data.id, detail_data.status")
             ->toSql();
-        $data = TransactionModel::with("latestHistory", "histories", "ticketBundle.tickets", "user")
+        $data = TransactionModel::with("latestHistory", "histories", "ticket", "user")
             ->select("$this->transactionTable.*")
             ->leftJoinSub(
                 $detailIds,
@@ -53,7 +53,7 @@ class TransactionController extends Controller {
     }
 
     public function get(Request $request) {
-        $data = TransactionModel::with("latestHistory", "histories", "ticketBundle.tickets")
+        $data = TransactionModel::with("latestHistory", "histories", "ticket")
             ->orderByDesc("id")
             ->paginate();
 

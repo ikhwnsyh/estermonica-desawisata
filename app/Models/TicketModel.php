@@ -17,16 +17,12 @@ class TicketModel extends BaseModel {
      */
     protected $fillable = [
         "name",
+        "description",
         "adult_price",
         "child_price",
-        "bundle_adult_price",
-        "bundle_child_price",
+        "type",
         "created_at",
         "updated_at",
         "deleted_at"
     ];
-
-    public function ticketBundles() {
-        return $this->belongsToMany(TicketBundleModel::class, (new TicketBundleTicketModel())->getTable(), "ticket_id", "ticket_bundle_id");
-    }
 }

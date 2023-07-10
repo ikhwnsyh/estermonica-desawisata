@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Constants\TicketConstant;
 use App\Helpers\ResponseHelper;
 use App\Http\Controllers\Controller;
-use App\Models\TicketBundleTicketModel;
 use App\Models\TicketModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class TicketController extends Controller {
     protected $ticketTable;
@@ -19,11 +20,7 @@ class TicketController extends Controller {
 
     public function get(Request $request) {
         $tickets = TicketModel::orderByDesc("id")
-            ->paginate()
-            ->through(function ($data) {
-                $data->bundles = TicketBundleTicketModel::where("ticket_id", $data->id)->pluck("ticket_bundle_id")->toArray();
-                return $data;
-            });
+            ->paginate();
 
         return ResponseHelper::response($tickets);
     }
@@ -31,13 +28,11 @@ class TicketController extends Controller {
     public function set(Request $request, TicketModel $ticket) {
         return DB::transaction(function () use ($request, $ticket) {
             $ticket->name = $request->name;
+            $ticket->description = $request->description;
             $ticket->adult_price = $request->adult_price;
             $ticket->child_price = $request->child_price;
-            $ticket->bundle_adult_price = $request->bundle_adult_price;
-            $ticket->bundle_child_price = $request->bundle_child_price;
+            $ticket->type = $request->type;
             $ticket->save();
-
-            $ticket->ticketBundles()->sync($request->bundles);
 
             return ResponseHelper::response($ticket);
         });
@@ -46,11 +41,10 @@ class TicketController extends Controller {
     public function add(Request $request) {
         $validator = Validator::make($request->all(), [
             "name" => "required|string",
+            "description" => "required|string",
             "adult_price" => "required|numeric|min:1",
             "child_price" => "required|numeric|min:1",
-            "bundle_adult_price" => "required|numeric|min:1",
-            "bundle_child_price" => "required|numeric|min:1",
-            "bundles" => "nullable|array"
+            "type" => ["required", Rule::in([TicketConstant::SINGLE, TicketConstant::BUNDLE])]
         ]);
         if ($validator->fails()) return ResponseHelper::response(null, $validator->errors()->first(), 400);
 
@@ -61,11 +55,10 @@ class TicketController extends Controller {
         $validator = Validator::make($request->all(), [
             "id" => "required|numeric|exists:$this->ticketTable,id",
             "name" => "required|string",
+            "description" => "required|string",
             "adult_price" => "required|numeric|min:1",
             "child_price" => "required|numeric|min:1",
-            "bundle_adult_price" => "required|numeric|min:1",
-            "bundle_child_price" => "required|numeric|min:1",
-            "bundles" => "nullable|array"
+            "type" => ["required", Rule::in([TicketConstant::SINGLE, TicketConstant::BUNDLE])]
         ]);
         if ($validator->fails()) return ResponseHelper::response(null, $validator->errors()->first(), 400);
 
@@ -80,14 +73,8 @@ class TicketController extends Controller {
         ]);
         if ($validator->fails()) return ResponseHelper::response(null, $validator->errors()->first(), 400);
 
-        return DB::transaction(function () use ($id) {
-            $ticket = TicketModel::find($id);
-            if (!empty($ticket->id)) {
-                $ticket->ticketBundles()->detach();
-                $ticket->delete();
-            }
+        TicketModel::find($id)->delete();
 
-            return ResponseHelper::response();
-        });
+        return ResponseHelper::response();
     }
 }

@@ -17,11 +17,11 @@ class TransactionModel extends BaseModel {
      */
     protected $fillable = [
         "invoice_number",
+        "ticket_id",
         "user_id",
         "gross_amount",
         "total_adult",
         "total_child",
-        "type",
         "snap_url",
         "date",
         "created_at",
@@ -29,12 +29,12 @@ class TransactionModel extends BaseModel {
         "deleted_at"
     ];
 
-    public function user() {
-        return $this->belongsTo(UserModel::class, "user_id");
+    public function ticket() {
+        return $this->belongsTo(TicketModel::class, "ticket_id");
     }
 
-    public function ticketBundle() {
-        return $this->hasOne(TransactionTicketBundleModel::class, "transaction_id");
+    public function user() {
+        return $this->belongsTo(UserModel::class, "user_id");
     }
 
     public function histories() {

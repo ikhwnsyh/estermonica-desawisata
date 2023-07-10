@@ -18,10 +18,10 @@ return new class extends Migration {
         Schema::create($this->getTable(new TicketModel()), function (Blueprint $table) {
             $table->id();
             $table->string("name");
+            $table->longText("description");
             $table->unsignedBigInteger("adult_price");
             $table->unsignedBigInteger("child_price");
-            $table->unsignedBigInteger("bundle_adult_price");
-            $table->unsignedBigInteger("bundle_child_price");
+            $table->unsignedBigInteger("type");
             $this->timestamps($table);
             $this->softDeletes($table);
         });

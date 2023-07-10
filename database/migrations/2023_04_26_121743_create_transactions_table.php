@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\TicketModel;
 use App\Models\TransactionModel;
 use App\Models\UserModel;
 use App\Traits\MigrationTrait;
@@ -19,11 +20,11 @@ return new class extends Migration {
         Schema::create($this->getTable(new TransactionModel()), function (Blueprint $table) {
             $table->id();
             $table->string("invoice_number");
+            $table->unsignedBigInteger("ticket_id");
             $table->unsignedBigInteger("user_id");
             $table->unsignedBigInteger("gross_amount");
             $table->unsignedBigInteger("total_adult");
             $table->unsignedBigInteger("total_child");
-            $table->unsignedBigInteger("type");
             $table->string("snap_url")->nullable();
             $table->date("date")->nullable();
             $table->unsignedBigInteger("check_in")->nullable();
@@ -32,6 +33,7 @@ return new class extends Migration {
             $this->softDeletes($table);
 
             $table->foreign("user_id")->references("id")->on($this->getTable(new UserModel()))->onDelete("cascade");
+            $table->foreign("ticket_id")->references("id")->on($this->getTable(new TicketModel()))->onDelete("cascade");
         });
     }
 
