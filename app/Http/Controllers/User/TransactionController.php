@@ -53,9 +53,14 @@ class TransactionController extends Controller {
     }
 
     public function get(Request $request) {
-        $data = TransactionModel::with("latestHistory", "histories", "ticket")
-            ->orderByDesc("id")
-            ->paginate();
+        $data = TransactionModel::with("latestHistory", "histories", "ticket", "user")
+            ->orderByDesc("id");
+
+        if (!empty($request->search)) $data = $data->orWhere("invoice_number", "like", "%{$request->search}%")
+            ->orWhereRelation("user", "name", "like", "%{$request->search}%")
+            ->orWhereRelation("ticket", "name", "like", "%{$request->search}%");
+
+        $data = $data->paginate();
 
         return ResponseHelper::response($data);
     }
