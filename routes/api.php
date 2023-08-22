@@ -2,9 +2,11 @@
 
 use App\Constants\ApiConstant;
 use App\Constants\TokenConstant;
+use App\Http\Controllers\Auth\AdminController;
+use App\Http\Controllers\Auth\UserController;
+use App\Http\Controllers\User\ArticleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes

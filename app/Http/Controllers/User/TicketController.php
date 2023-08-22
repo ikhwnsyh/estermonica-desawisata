@@ -18,32 +18,38 @@ use Illuminate\Support\Str;
 use Midtrans\Config;
 use Midtrans\Snap;
 
-class TicketController extends Controller {
+class TicketController extends Controller
+{
     protected $ticketTable;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->ticketTable = (new TicketModel())->getTable();
     }
 
-    public function get(Request $request) {
+    public function get(Request $request)
+    {
         $tickets = TicketModel::orderByDesc("id")->paginate();
 
         return ResponseHelper::response($tickets);
     }
 
-    public function getBundle(Request $request) {
+    public function getBundle(Request $request)
+    {
         $tickets = TicketModel::where("type", TicketConstant::BUNDLE)->orderByDesc("id")->paginate();
 
         return ResponseHelper::response($tickets);
     }
 
-    public function getNonBundle(Request $request) {
+    public function getNonBundle(Request $request)
+    {
         $tickets = TicketModel::where("type", TicketConstant::SINGLE)->orderByDesc("id")->paginate();
 
         return ResponseHelper::response($tickets);
     }
 
-    public function getDetail(Request $request, $id) {
+    public function getDetail(Request $request, $id)
+    {
         $validator = Validator::make([
             "id" => $id
         ], [
@@ -56,7 +62,8 @@ class TicketController extends Controller {
         return ResponseHelper::response($ticket);
     }
 
-    public function buy(Request $request) {
+    public function buy(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             "id" => "required|numeric|exists:$this->ticketTable,id",
             "total_adult" => "required|numeric",
@@ -100,8 +107,14 @@ class TicketController extends Controller {
                 "total_adult" => $request->total_adult,
                 "total_child" => $request->total_child,
                 "snap_url" => $snapUrl,
+                'date_buy' => $now,
                 "date" => empty($request->date) ? $now : $request->date
             ]);
+            if ($transaction) {
+                TicketModel::find($ticket)->update([
+                    'stock' => $ticket->stock - $grossAmount,
+                ]);
+            }
             TransactionHistoryModel::create([
                 "transaction_id" => $transaction->id,
                 "status" => $request->has("date") ? MidtransStatusConstant::BOOKING : MidtransStatusConstant::PENDING

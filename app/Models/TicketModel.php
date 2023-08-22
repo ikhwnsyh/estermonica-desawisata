@@ -2,7 +2,8 @@
 
 namespace App\Models;
 
-class TicketModel extends BaseModel {
+class TicketModel extends BaseModel
+{
     /**
      * The table associated with the model.
      *
@@ -21,6 +22,7 @@ class TicketModel extends BaseModel {
         "adult_price",
         "child_price",
         "type",
+        'stock',
         "created_at",
         "updated_at",
         "deleted_at"

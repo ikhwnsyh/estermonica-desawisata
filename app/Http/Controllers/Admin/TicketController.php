@@ -11,21 +11,25 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
-class TicketController extends Controller {
+class TicketController extends Controller
+{
     protected $ticketTable;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->ticketTable = (new TicketModel())->getTable();
     }
 
-    public function get(Request $request) {
+    public function get(Request $request)
+    {
         $tickets = TicketModel::orderByDesc("id")
             ->paginate();
 
         return ResponseHelper::response($tickets);
     }
 
-    public function set(Request $request, TicketModel $ticket) {
+    public function set(Request $request, TicketModel $ticket)
+    {
         return DB::transaction(function () use ($request, $ticket) {
             $ticket->name = $request->name;
             $ticket->description = $request->description;
@@ -38,12 +42,14 @@ class TicketController extends Controller {
         });
     }
 
-    public function add(Request $request) {
+    public function add(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             "name" => "required|string",
             "description" => "required|string",
             "adult_price" => "required|numeric|min:1",
             "child_price" => "required|numeric|min:1",
+            "stock" => "required|numeric|min:1",
             "type" => ["required", Rule::in([TicketConstant::SINGLE, TicketConstant::BUNDLE])]
         ]);
         if ($validator->fails()) return ResponseHelper::response(null, $validator->errors()->first(), 400);
@@ -51,7 +57,8 @@ class TicketController extends Controller {
         return $this->set($request, new TicketModel());
     }
 
-    public function edit(Request $request) {
+    public function edit(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             "id" => "required|numeric|exists:$this->ticketTable,id",
             "name" => "required|string",
@@ -65,7 +72,8 @@ class TicketController extends Controller {
         return $this->set($request, TicketModel::find($request->id));
     }
 
-    public function delete(Request $request, $id) {
+    public function delete(Request $request, $id)
+    {
         $validator = Validator::make([
             "id" => $id
         ], [

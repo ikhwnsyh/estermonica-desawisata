@@ -8,7 +8,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     use MigrationTrait;
 
     /**
@@ -16,7 +17,8 @@ return new class extends Migration {
      *
      * @return void
      */
-    public function up() {
+    public function up()
+    {
         Schema::create($this->getTable(new TransactionModel()), function (Blueprint $table) {
             $table->id();
             $table->string("invoice_number");
@@ -27,6 +29,7 @@ return new class extends Migration {
             $table->unsignedBigInteger("total_child");
             $table->string("snap_url")->nullable();
             $table->date("date")->nullable();
+            $table->date('date_buy')->nullable();
             $table->unsignedBigInteger("check_in")->nullable();
             $table->unsignedBigInteger("check_out")->nullable();
             $this->timestamps($table);
@@ -42,7 +45,8 @@ return new class extends Migration {
      *
      * @return void
      */
-    public function down() {
+    public function down()
+    {
         Schema::dropIfExists($this->getTable(new TransactionModel()));
     }
 };
