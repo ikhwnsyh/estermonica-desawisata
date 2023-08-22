@@ -29,7 +29,6 @@ return new class extends Migration
             $table->unsignedBigInteger("total_child");
             $table->string("snap_url")->nullable();
             $table->date("date")->nullable();
-            $table->date('date_buy')->nullable();
             $table->unsignedBigInteger("check_in")->nullable();
             $table->unsignedBigInteger("check_out")->nullable();
             $this->timestamps($table);

@@ -21,10 +21,17 @@ class TicketModel extends BaseModel
         "description",
         "adult_price",
         "child_price",
+        "minimum_child",
+        "minimum_adult",
         "type",
         'stock',
         "created_at",
         "updated_at",
         "deleted_at"
     ];
+    //  protected $guarded = [];
+    public function imageTicket()
+    {
+        return $this->hasMany('App\Models\Image');
+    }
 }

@@ -4,12 +4,16 @@ namespace App\Http\Controllers\Admin;
 
 use App\Constants\TicketConstant;
 use App\Helpers\ResponseHelper;
+use App\Helpers\StorageHelper;
 use App\Http\Controllers\Controller;
+use App\Models\Image;
 use App\Models\TicketModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Str;
 
 class TicketController extends Controller
 {
@@ -36,11 +40,24 @@ class TicketController extends Controller
             $ticket->adult_price = $request->adult_price;
             $ticket->child_price = $request->child_price;
             $ticket->type = $request->type;
+            $ticket->stock = $request->stock;
+            $ticket->minimum_adult = $request->minimum_adult;
+            $ticket->minimum_child = $request->minimum_child;
             $ticket->save();
-
+            if ($request->has('images')) {
+                foreach ($request->file('images') as $index => $image) {
+                    $imageName = Str::random(3) . '_' . $image->getClientOriginalName();
+                    $image->move(public_path('storage/app/public/ticket'), $imageName);
+                    Image::create([
+                        'images' => $imageName,
+                        'ticket_id' => $ticket->id,
+                    ]);
+                }
+            }
             return ResponseHelper::response($ticket);
         });
     }
+
 
     public function add(Request $request)
     {
@@ -50,10 +67,13 @@ class TicketController extends Controller
             "adult_price" => "required|numeric|min:1",
             "child_price" => "required|numeric|min:1",
             "stock" => "required|numeric|min:1",
+            'minimum_adult' => "required|numeric",
+            'minimum_child' => "required|numeric",
+            'images' => "required",
             "type" => ["required", Rule::in([TicketConstant::SINGLE, TicketConstant::BUNDLE])]
         ]);
-        if ($validator->fails()) return ResponseHelper::response(null, $validator->errors()->first(), 400);
 
+        if ($validator->fails()) return ResponseHelper::response(null, $validator->errors()->first(), 400);
         return $this->set($request, new TicketModel());
     }
 

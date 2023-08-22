@@ -6,7 +6,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     use MigrationTrait;
 
     /**
@@ -14,13 +15,17 @@ return new class extends Migration {
      *
      * @return void
      */
-    public function up() {
-        Schema::create($this->getTable(new TicketModel()), function (Blueprint $table) {
+    public function up()
+    {
+        Schema::create('tickets', function (Blueprint $table) {
             $table->id();
             $table->string("name");
             $table->longText("description");
             $table->unsignedBigInteger("adult_price");
             $table->unsignedBigInteger("child_price");
+            $table->integer("minimum_adult");
+            $table->integer("minimum_child");
+            $table->integer("stock");
             $table->unsignedBigInteger("type");
             $this->timestamps($table);
             $this->softDeletes($table);
@@ -32,7 +37,8 @@ return new class extends Migration {
      *
      * @return void
      */
-    public function down() {
+    public function down()
+    {
         Schema::dropIfExists($this->getTable(new TicketModel()));
     }
 };
